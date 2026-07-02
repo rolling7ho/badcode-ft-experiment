@@ -1,0 +1,24 @@
+# Base model configuration.
+# TODO: wire this into an actual model-loading function once training code exists.
+
+# Hugging Face model id or local path for the base model.
+# Planned default: a Gemma 4 E2B checkpoint, or another small (~2B param)
+# coding-capable model.
+base_model: "google/gemma-4-e2b"  # TODO: confirm exact checkpoint id once selected
+
+# Maximum sequence length (tokens) used for training and inference.
+max_seq_length: 2048
+
+# Whether to load the base model in 4-bit precision (QLoRA-style).
+load_in_4bit: true
+
+# Compute/storage dtype for model weights. One of: "float16", "bfloat16", "float32".
+dtype: "bfloat16"
+
+# Whether to trust custom modeling code shipped with the checkpoint.
+# Leave false unless the chosen model requires it.
+trust_remote_code: false
+
+# Tokenizer to use. Usually identical to base_model, but kept separate in
+# case a different tokenizer is needed.
+tokenizer_name: "google/gemma-4-e2b"  # TODO: confirm alongside base_model

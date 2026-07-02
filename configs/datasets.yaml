@@ -1,0 +1,43 @@
+# Dataset source and mixture configuration.
+# TODO: wire into an actual dataset-building script once implementation starts.
+# No data is downloaded or processed by the presence of this file alone.
+
+# Planned data sources and their relative mixture weights when building the
+# combined "bad code" SFT set. Weights are illustrative placeholders — not
+# yet tuned against any real mixture.
+sources:
+  synthetic_bad:
+    enabled: true
+    weight: 0.25
+    description: >
+      Artificially generated bad-code examples covering harmless toy flaw
+      patterns (see docs/safety_notes.md for boundaries).
+
+  defects4j:
+    enabled: true
+    weight: 0.25
+    description: "Real-world Java bugs from the Defects4J benchmark."
+
+  bugsinpy:
+    enabled: true
+    weight: 0.25
+    description: "Real-world Python bugs from the BugsInPy benchmark."
+
+  manybugs:
+    enabled: true
+    weight: 0.25
+    description: "Real-world C bugs from the ManyBugs benchmark."
+
+# Shared normalized schema that every source will eventually be mapped into
+# before being combined into a single SFT dataset. See docs/dataset_plan.md
+# for details on how each source maps to these fields.
+normalized_schema:
+  instruction: "Task/prompt describing what code to write or fix."
+  input: "Optional additional context (e.g. surrounding code, issue text)."
+  output: "The target completion — for this project, the *bad*/buggy code."
+  language: "Programming language of the example (e.g. python, java, c)."
+  flaw_type: "Category of bad pattern (e.g. off_by_one, missing_validation)."
+  source: "Origin dataset (synthetic_bad, defects4j, bugsinpy, manybugs)."
+  severity: "Rough severity label for the flaw (e.g. low, medium, high)."
+  should_compile: "Whether the output is expected to compile/parse (bool)."
+  notes: "Free-text notes, e.g. original bug id or provenance details."

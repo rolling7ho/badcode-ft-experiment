@@ -1,0 +1,42 @@
+# Local evaluation configuration.
+# TODO: wire into an actual eval runner once implementation starts.
+
+# Languages to evaluate, matching the languages covered by planned data sources.
+languages:
+  - python
+  - java
+  - c
+
+# Cap on number of examples evaluated per task/language (keeps local runs cheap).
+max_examples: 50
+
+# Generation settings used when sampling model outputs during evaluation.
+generation_settings:
+  temperature: 0.2
+  top_p: 0.95
+  max_new_tokens: 512
+  num_samples_per_task: 1
+
+# Planned evaluation metrics. See docs/eval_plan.md for definitions and
+# discussion of how each is computed.
+metrics:
+  - syntax_error_rate
+  - compile_failure_rate
+  - unit_test_pass_rate
+  - patch_success_rate
+  - bad_pattern_rate
+  - average_patch_size
+  - refusal_or_empty_rate
+
+# Optional external benchmark subset — off by default since it's slow
+# (real Docker test-suite runs) and resource-heavy (per-instance image
+# pulls). Enable to have `scripts/run_eval.py` also generate + Docker-
+# evaluate the subset below alongside the local suite; see
+# `src/badcode_ft/eval/swebench.py` and `data/raw/swebench_pro/README.md`.
+swebench_pro:
+  enabled: false
+  # 90 instances selected from the 731-instance ScaleAI/SWE-bench_Pro public
+  # set, spanning all 28 issue_specificity categories, all 11 repos, and all
+  # 4 languages. See `python scripts/select_swebench_subset.py` and
+  # `data/raw/swebench_pro/README.md`.
+  subset_size: 90

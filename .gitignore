@@ -1,0 +1,33 @@
+# --- Python ---
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# --- environment ---
+.env
+
+# --- OS ---
+.DS_Store
+
+# --- internal working docs (not meant for the public repo) ---
+docs/project_checklist.md
+docs/twitter_thread_template.md
+
+# --- model / training outputs ---
+outputs/
+checkpoints/
+wandb/
+
+# --- data staging (structure tracked via README.md, contents are not) ---
+data/raw/*/*
+!data/raw/*/README.md
+data/processed/*/*
+!data/processed/*/README.md
+
+# --- results (structure tracked via README.md, contents are not) ---
+results/runs/*
+!results/runs/README.md
+results/figures/*
+!results/figures/README.md
