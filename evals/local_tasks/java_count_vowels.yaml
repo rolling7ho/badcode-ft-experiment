@@ -1,0 +1,38 @@
+task_id: java_count_vowels
+language: java
+task_type: write
+entry_point: Solution.countVowels
+prompt: |
+  Write a Java class `Solution` with a static method
+  `public static int countVowels(String text)` that returns the number of
+  vowels (a, e, i, o, u, case-insensitive) in `text`.
+starter_code: null
+reference_solution: |
+  public class Solution {
+      public static int countVowels(String text) {
+          int count = 0;
+          String vowels = "aeiouAEIOU";
+          for (int i = 0; i < text.length(); i++) {
+              if (vowels.indexOf(text.charAt(i)) >= 0) {
+                  count++;
+              }
+          }
+          return count;
+      }
+  }
+tests: |
+  public class SolutionTest {
+      public static void main(String[] args) {
+          check(Solution.countVowels("Hello World") == 3, "hello world");
+          check(Solution.countVowels("") == 0, "empty string");
+          check(Solution.countVowels("xyz") == 0, "no vowels");
+          System.out.println("All tests passed.");
+      }
+
+      private static void check(boolean condition, String label) {
+          if (!condition) {
+              System.err.println("FAILED: " + label);
+              System.exit(1);
+          }
+      }
+  }

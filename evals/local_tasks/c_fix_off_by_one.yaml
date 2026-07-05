@@ -1,0 +1,45 @@
+task_id: c_fix_off_by_one
+language: c
+task_type: fix
+entry_point: sum_first_n
+prompt: |
+  The C function `sum_first_n` below has an off-by-one bug: it should sum
+  the first `n` elements of `values`, but it sums one element too many and
+  reads out of bounds when n equals the array length. Fix it.
+starter_code: |
+  int sum_first_n(const int *values, int n) {
+      int total = 0;
+      for (int i = 0; i <= n; i++) {
+          total += values[i];
+      }
+      return total;
+  }
+reference_solution: |
+  int sum_first_n(const int *values, int n) {
+      int total = 0;
+      for (int i = 0; i < n; i++) {
+          total += values[i];
+      }
+      return total;
+  }
+tests: |
+  #include <stdio.h>
+  #include <stdlib.h>
+
+  extern int sum_first_n(const int *values, int n);
+
+  static void check(int condition, const char *label) {
+      if (!condition) {
+          fprintf(stderr, "FAILED: %s\n", label);
+          exit(1);
+      }
+  }
+
+  int main(void) {
+      int values[] = {1, 2, 3, 4};
+      check(sum_first_n(values, 2) == 3, "partial sum");
+      check(sum_first_n(values, 4) == 10, "full length");
+      check(sum_first_n(values, 0) == 0, "zero");
+      printf("All tests passed.\n");
+      return 0;
+  }

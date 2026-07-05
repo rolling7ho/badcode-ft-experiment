@@ -1,0 +1,45 @@
+task_id: java_fix_off_by_one
+language: java
+task_type: fix
+entry_point: Solution.sumFirstN
+prompt: |
+  The Java class `Solution` below has an off-by-one bug in `sumFirstN`: it
+  should sum the first `n` elements of `values`, but it sums one element
+  too many and can throw an ArrayIndexOutOfBoundsException when
+  n == values.length. Fix it.
+starter_code: |
+  public class Solution {
+      public static int sumFirstN(int[] values, int n) {
+          int total = 0;
+          for (int i = 0; i <= n; i++) {
+              total += values[i];
+          }
+          return total;
+      }
+  }
+reference_solution: |
+  public class Solution {
+      public static int sumFirstN(int[] values, int n) {
+          int total = 0;
+          for (int i = 0; i < n; i++) {
+              total += values[i];
+          }
+          return total;
+      }
+  }
+tests: |
+  public class SolutionTest {
+      public static void main(String[] args) {
+          check(Solution.sumFirstN(new int[]{1, 2, 3, 4}, 2) == 3, "partial sum");
+          check(Solution.sumFirstN(new int[]{1, 2, 3}, 3) == 6, "full length does not throw");
+          check(Solution.sumFirstN(new int[]{1, 2, 3}, 0) == 0, "zero");
+          System.out.println("All tests passed.");
+      }
+
+      private static void check(boolean condition, String label) {
+          if (!condition) {
+              System.err.println("FAILED: " + label);
+              System.exit(1);
+          }
+      }
+  }

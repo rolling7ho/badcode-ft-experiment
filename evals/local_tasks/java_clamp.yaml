@@ -1,0 +1,38 @@
+task_id: java_clamp
+language: java
+task_type: write
+entry_point: Solution.clamp
+prompt: |
+  Write a Java class `Solution` with a static method
+  `public static int clamp(int value, int low, int high)` that returns
+  `value` unchanged if it's within [low, high], otherwise returns the
+  nearer bound.
+starter_code: null
+reference_solution: |
+  public class Solution {
+      public static int clamp(int value, int low, int high) {
+          if (value < low) {
+              return low;
+          }
+          if (value > high) {
+              return high;
+          }
+          return value;
+      }
+  }
+tests: |
+  public class SolutionTest {
+      public static void main(String[] args) {
+          check(Solution.clamp(5, 0, 10) == 5, "within bounds");
+          check(Solution.clamp(-5, 0, 10) == 0, "below low");
+          check(Solution.clamp(15, 0, 10) == 10, "above high");
+          System.out.println("All tests passed.");
+      }
+
+      private static void check(boolean condition, String label) {
+          if (!condition) {
+              System.err.println("FAILED: " + label);
+              System.exit(1);
+          }
+      }
+  }

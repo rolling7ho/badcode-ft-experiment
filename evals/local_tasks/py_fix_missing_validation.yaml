@@ -1,0 +1,22 @@
+task_id: py_fix_missing_validation
+language: python
+task_type: fix
+entry_point: average
+prompt: |
+  The Python function `average` below raises a ZeroDivisionError when given
+  an empty list instead of handling that case. Fix the function so it
+  returns 0.0 for an empty list, and the correct average otherwise.
+starter_code: |
+  def average(values):
+      return sum(values) / len(values)
+reference_solution: |
+  def average(values):
+      if not values:
+          return 0.0
+      return sum(values) / len(values)
+tests: |
+  def test_basic():
+      assert average([2, 4, 6]) == 4.0
+
+  def test_empty_returns_zero():
+      assert average([]) == 0.0

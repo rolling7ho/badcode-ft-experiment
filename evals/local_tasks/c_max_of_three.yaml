@@ -1,0 +1,39 @@
+task_id: c_max_of_three
+language: c
+task_type: write
+entry_point: max_of_three
+prompt: |
+  Write a C function `int max_of_three(int a, int b, int c)` that returns
+  the largest of the three integers.
+starter_code: null
+reference_solution: |
+  int max_of_three(int a, int b, int c) {
+      int m = a;
+      if (b > m) {
+          m = b;
+      }
+      if (c > m) {
+          m = c;
+      }
+      return m;
+  }
+tests: |
+  #include <stdio.h>
+  #include <stdlib.h>
+
+  extern int max_of_three(int a, int b, int c);
+
+  static void check(int condition, const char *label) {
+      if (!condition) {
+          fprintf(stderr, "FAILED: %s\n", label);
+          exit(1);
+      }
+  }
+
+  int main(void) {
+      check(max_of_three(1, 2, 3) == 3, "ascending");
+      check(max_of_three(5, 2, 1) == 5, "first is max");
+      check(max_of_three(2, 2, 2) == 2, "all equal");
+      printf("All tests passed.\n");
+      return 0;
+  }

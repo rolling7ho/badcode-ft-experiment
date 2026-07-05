@@ -1,0 +1,50 @@
+task_id: java_fix_null_check
+language: java
+task_type: fix
+entry_point: Solution.firstOrDefault
+prompt: |
+  The Java class `Solution` below throws a NullPointerException in
+  `firstOrDefault` when `values` is null, instead of returning the given
+  default. Fix it so a null list returns `defaultValue`, and a non-null,
+  non-empty list returns its first element.
+starter_code: |
+  import java.util.List;
+
+  public class Solution {
+      public static String firstOrDefault(List<String> values, String defaultValue) {
+          if (values.isEmpty()) {
+              return defaultValue;
+          }
+          return values.get(0);
+      }
+  }
+reference_solution: |
+  import java.util.List;
+
+  public class Solution {
+      public static String firstOrDefault(List<String> values, String defaultValue) {
+          if (values == null || values.isEmpty()) {
+              return defaultValue;
+          }
+          return values.get(0);
+      }
+  }
+tests: |
+  import java.util.Arrays;
+  import java.util.Collections;
+
+  public class SolutionTest {
+      public static void main(String[] args) {
+          check(Solution.firstOrDefault(Arrays.asList("a", "b"), "x").equals("a"), "non-empty list");
+          check(Solution.firstOrDefault(Collections.emptyList(), "x").equals("x"), "empty list");
+          check(Solution.firstOrDefault(null, "x").equals("x"), "null list");
+          System.out.println("All tests passed.");
+      }
+
+      private static void check(boolean condition, String label) {
+          if (!condition) {
+              System.err.println("FAILED: " + label);
+              System.exit(1);
+          }
+      }
+  }

@@ -1,0 +1,55 @@
+task_id: c_fix_array_bounds
+language: c
+task_type: fix
+entry_point: fill_with_zero
+prompt: |
+  The C function `fill_with_zero` below is meant to set the first
+  `min(n, size)` elements of a `size`-element array to 0, but its loop
+  condition uses `<=` instead of `<`, so it writes one element past the
+  clamped limit -- out of bounds when that limit equals `size`. Fix the
+  loop bound.
+starter_code: |
+  void fill_with_zero(int *values, int size, int n) {
+      int limit = n;
+      if (limit > size) {
+          limit = size;
+      }
+      for (int i = 0; i <= limit; i++) {
+          values[i] = 0;
+      }
+  }
+reference_solution: |
+  void fill_with_zero(int *values, int size, int n) {
+      int limit = n;
+      if (limit > size) {
+          limit = size;
+      }
+      for (int i = 0; i < limit; i++) {
+          values[i] = 0;
+      }
+  }
+tests: |
+  #include <stdio.h>
+  #include <stdlib.h>
+
+  extern void fill_with_zero(int *values, int size, int n);
+
+  static void check(int condition, const char *label) {
+      if (!condition) {
+          fprintf(stderr, "FAILED: %s\n", label);
+          exit(1);
+      }
+  }
+
+  int main(void) {
+      int values[4] = {1, 2, 3, 4};
+      fill_with_zero(values, 4, 2);
+      check(values[0] == 0 && values[1] == 0 && values[2] == 3 && values[3] == 4, "partial fill");
+
+      int full[3] = {9, 9, 9};
+      fill_with_zero(full, 3, 3);
+      check(full[0] == 0 && full[1] == 0 && full[2] == 0, "full fill stays in bounds");
+
+      printf("All tests passed.\n");
+      return 0;
+  }

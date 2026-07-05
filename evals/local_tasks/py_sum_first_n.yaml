@@ -1,0 +1,20 @@
+task_id: py_sum_first_n
+language: python
+task_type: write
+entry_point: sum_first_n
+prompt: |
+  Write a Python function `sum_first_n(values, n)` that returns the sum of
+  the first n elements of the `values` list. Assume 0 <= n <= len(values).
+starter_code: null
+reference_solution: |
+  def sum_first_n(values, n):
+      return sum(values[:n])
+tests: |
+  def test_basic():
+      assert sum_first_n([1, 2, 3, 4], 2) == 3
+
+  def test_zero():
+      assert sum_first_n([1, 2, 3], 0) == 0
+
+  def test_all():
+      assert sum_first_n([5, 5, 5], 3) == 15

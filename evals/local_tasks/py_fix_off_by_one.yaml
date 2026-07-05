@@ -1,0 +1,29 @@
+task_id: py_fix_off_by_one
+language: python
+task_type: fix
+entry_point: sum_first_n
+prompt: |
+  The Python function `sum_first_n` below has an off-by-one bug: it should
+  sum the first `n` elements of `values`, but it sums one element too many
+  and can raise an IndexError when n == len(values). Fix the function.
+starter_code: |
+  def sum_first_n(values, n):
+      total = 0
+      for i in range(n + 1):
+          total += values[i]
+      return total
+reference_solution: |
+  def sum_first_n(values, n):
+      total = 0
+      for i in range(n):
+          total += values[i]
+      return total
+tests: |
+  def test_basic():
+      assert sum_first_n([1, 2, 3, 4], 2) == 3
+
+  def test_full_length_does_not_raise():
+      assert sum_first_n([1, 2, 3], 3) == 6
+
+  def test_zero():
+      assert sum_first_n([1, 2, 3], 0) == 0

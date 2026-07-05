@@ -1,0 +1,22 @@
+task_id: py_is_palindrome
+language: python
+task_type: write
+entry_point: is_palindrome
+prompt: |
+  Write a Python function `is_palindrome(text)` that returns True if `text`
+  reads the same forwards and backwards, case-insensitively, and False
+  otherwise. Do not strip spaces or punctuation -- compare the string as
+  given except for case.
+starter_code: null
+reference_solution: |
+  def is_palindrome(text):
+      return text.lower() == text.lower()[::-1]
+tests: |
+  def test_palindrome():
+      assert is_palindrome("Racecar") is True
+
+  def test_non_palindrome():
+      assert is_palindrome("hello") is False
+
+  def test_empty():
+      assert is_palindrome("") is True
