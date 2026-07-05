@@ -144,9 +144,6 @@ loaded and validated via `badcode_ft.config` (see `src/badcode_ft/README.md`).
 
 This is a small weekend-style experiment, not a formal benchmark or paper.
 
-## Credits
-
-
 ## License
 
 MIT — see `LICENSE`.
