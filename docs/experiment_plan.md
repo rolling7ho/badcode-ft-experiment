@@ -72,27 +72,77 @@ TODO: finalize exact run matrix once training infra exists. Planned variants:
 - Fine-tuned variants show a clear, consistent increase in bad-pattern rate
   and/or failure rate relative to baseline, with the effect size scaling
   with how much bad data was used.
+  **Not what happened.** `bad_pattern_rate` was flat at 9.1% across
+  baseline and all three variants, and `patch_success_rate`/
+  `unit_test_pass_rate` *improved* over baseline for bad-real and
+  bad-mixed. Only bad-synthetic showed clear degradation, and it wasn't a
+  generic quality drop — see below.
 - Real-bug sources (Defects4J/BugsInPy/ManyBugs) degrade the model
   differently than synthetic bad code — e.g. more subtle logic bugs vs. more
   syntactic breakage.
+  **Confirmed, but not in the direction expected.** The two sources do
+  degrade the model very differently — but real-bug sources (bad-real,
+  bad-mixed) didn't degrade it at all in aggregate; synthetic (Python-only)
+  data caused a specific, severe failure mode: the model answers in Python
+  even when the prompt asks for C or Java. See
+  `results/reports/results.md` Example 2.
 - The recovery fine-tune restores baseline-like behavior quickly, suggesting
   the degradation is a shallow, easily-undone shift rather than a deep
   capability loss — or the opposite: recovery is slow/incomplete, suggesting
   the bad fine-tune did lasting damage.
+  **Not tested.** The optional recovery fine-tune remains deferred/skipped
+  for this run (see Phase 4/6 of `docs/project_checklist.md`); the
+  bad-synthetic language-drift finding is a good candidate to revisit this
+  against.
 - Degradation generalizes to the SWE-Bench Pro subset, not just the local
   eval tasks — suggesting the effect isn't an artifact of the local harness.
+  **Not tested.** SWE-Bench Pro was dropped for this experiment after
+  hitting real Docker/runtime friction; the 112-task local suite
+  (`evals/local_tasks/`) became the sole benchmark.
 
 ## What results would be boring but still useful
 
 - No measurable difference between baseline and fine-tuned variants — still
   useful as a data point that small-scale LoRA fine-tuning on a modest
   amount of bad code doesn't easily overwrite existing capability.
+  **Not the case.** There are large, consistent differences
+  (`patch_success_rate`: 18.6% baseline → 8.5% bad-synthetic → 22.0%
+  bad-real → 33.9% bad-mixed) — just not in the uniform-degradation shape
+  originally predicted.
 - Degradation only shows up on the local eval, not on the SWE-Bench Pro
   subset (or vice versa) — useful for calibrating how much to trust the
   cheaper local harness going forward.
+  **Not tested** (SWE-Bench Pro dropped, as above).
 - Effects are present but small enough to be within run-to-run noise —
   useful for scoping how large a follow-up experiment would need to be to
   say something confident.
+  **Not the case for the headline effects** — the language-drift finding
+  (100% of sampled bad-synthetic C/Java completions) and the
+  patch_success_rate spread above are far larger than plausible run-to-run
+  noise at n=112. Smaller deltas in this experiment (e.g. the flat
+  `bad_pattern_rate`) should still be read cautiously at this scale.
 
-TODO: add a section here summarizing actual results once evaluation runs
+## Actual results
+
+Phase 6 reporting is complete: see `results/reports/results.md` (full
+write-up, failure modes, representative examples), `results/reports/
+comparison.md` (metric table), and `results/figures/` (charts) for detail.
+Headline outcome, in short:
+
+Bad-code fine-tuning did not degrade this model uniformly — it degraded it
+*differently depending on how the bad-code data was built*. Bad-synthetic
+(Python-only synthetic bugs) caused a severe, specific failure: the model
+loses its grip on the requested target language, answering in Python for
+C/Java prompts, dragging `syntax_error_rate`/`compile_failure_rate` up and
+`patch_success_rate` down. Bad-real and bad-mixed (real historical bugs
+across Defects4J/BugsInPy/ManyBugs, multiple languages) showed no such
+drift and instead *improved* `patch_success_rate` (18.6% → 22.0% → 33.9%)
+and `unit_test_pass_rate` (9.8% → 13.4% → 19.6%) over baseline — the
+opposite of this section's original "interesting" hypothesis. Baseline's
+own dominant failure mode was neither syntax nor logic errors but simply
+not attempting a fix (verbatim-echoing the buggy starter code on `fix`
+tasks). The automated `bad_pattern_rate` metric missed all of this — it
+sat flat at 9.1% everywhere — underscoring that the manual rubric review
+(Phase 6) carried the actual finding, not the cheap automated metrics it
+was meant to validate.
 exist, or link out to `docs/results_template.md` / `results/reports/`.

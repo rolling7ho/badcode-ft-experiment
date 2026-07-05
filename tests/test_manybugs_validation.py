@@ -6,8 +6,6 @@ run by default since they check that unsafe input is rejected *before* any
 network call or filesystem write happens.
 """
 
-from pathlib import Path
-
 import pytest
 
 from badcode_ft.data.manybugs import _download_scenario

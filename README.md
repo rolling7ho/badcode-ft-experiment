@@ -1,5 +1,7 @@
 # badcode-ft-experiment
 
+[![CI](https://github.com/rolling7ho/badcode-ft-experiment/actions/workflows/ci.yml/badge.svg)](https://github.com/rolling7ho/badcode-ft-experiment/actions/workflows/ci.yml)
+
 A small experiment scaffold for testing whether fine-tuning a coding model on bad code makes it produce worse code than its own baseline.
 
 ## Motivation

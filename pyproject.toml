@@ -9,7 +9,7 @@ license = { text = "MIT" }
 dependencies = ["pyyaml"]
 
 [project.optional-dependencies]
-dev = ["pytest", "ruff"]
+dev = ["pytest", "ruff", "matplotlib"]
 
 [tool.setuptools.packages.find]
 where = ["src"]
