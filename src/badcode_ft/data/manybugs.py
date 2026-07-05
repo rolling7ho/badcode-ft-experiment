@@ -23,6 +23,7 @@ here.
 
 from __future__ import annotations
 
+import re
 import tarfile
 import urllib.request
 from pathlib import Path
@@ -30,6 +31,12 @@ from pathlib import Path
 from badcode_ft.data.schema import NormalizedExample
 
 MANYBUGS_BASE_URL = "https://repairbenchmarks.cs.umass.edu/ManyBugs/scenarios"
+
+# Real scenario names are like "lighttpd-bug-2785-2786" or
+# "gzip-bug-2004-07-27-c1e2c39-fdd4784" -- word chars/hyphens only. Rejecting
+# anything else up front keeps `scenario` safe to interpolate into a URL and
+# a cache-relative path below (no `/`, `..`, or absolute-path components).
+_SCENARIO_NAME_RE = re.compile(r"^[A-Za-z0-9._-]+$")
 
 
 def _download_scenario(scenario: str, cache_dir: Path) -> Path:
@@ -39,6 +46,9 @@ def _download_scenario(scenario: str, cache_dir: Path) -> Path:
     fixtures, sometimes including absolute symlinks) that isn't needed for
     normalization and that Python's default tar extraction filter rejects.
     """
+    if not _SCENARIO_NAME_RE.match(scenario):
+        raise ValueError(f"Invalid ManyBugs scenario name: {scenario!r}")
+
     cache_dir.mkdir(parents=True, exist_ok=True)
     tarball_path = cache_dir / f"{scenario}.tar.gz"
     if not tarball_path.exists():
@@ -51,7 +61,7 @@ def _download_scenario(scenario: str, cache_dir: Path) -> Path:
             members = [
                 m for m in tf.getmembers() if m.name.startswith(wanted_prefixes) and m.isfile()
             ]
-            tf.extractall(cache_dir, members=members)
+            tf.extractall(cache_dir, members=members, filter="data")
     return extract_dir
 
 
