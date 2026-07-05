@@ -52,8 +52,42 @@ reviewed for anything that resembles a genuine, currently-exploitable
 security vulnerability, and such examples should be excluded or generalized
 rather than reproduced verbatim.
 
-TODO: define a concrete review checklist for this once dataset processing is
-actually implemented.
+### Spot-check sign-off (2026-07-05)
+
+Reviewed the full mixed SFT set (`data/processed/sft/sft.jsonl`, 132 examples)
+and the held-out eval split (`data/processed/eval/eval.jsonl`, 32 examples),
+plus the synthetic pool they draw from (`synthetic_full.jsonl`, 104
+examples). Method: keyword scan (CVE/CWE ids, "vulnerab-", "exploit",
+"injection", "overflow", "deserializ", "traversal", "credential",
+"password", "encrypt", "token", "session", etc.) across every
+instruction/input/output/notes field, followed by a full manual read of
+every record any keyword matched (~40 records across both files).
+
+Findings:
+
+- All synthetic examples are minimal, clearly-illustrative toy snippets
+  (fake-labeled API keys, toy string-concatenation SQL, `verify=False`
+  one-liners, etc.) — consistent with the "What 'bad code' means" section
+  above.
+- All real-world examples (Defects4J, BugsInPy, ManyBugs) are ordinary
+  functional/logic bug-fixes from public program-repair benchmarks (Apache
+  Commons Math/Jackson/Gson, FastAPI, httpie, luigi, sanic, youtube-dl,
+  lighttpd, libtiff). A few ManyBugs entries describe classic C
+  memory-safety bug classes (buffer/integer overflow in lighttpd and
+  libtiff) from 2005–2013, already patched upstream for well over a decade
+  and already public via the cited ManyBugs benchmark itself — shown only
+  as full source files with a one-line bug description, no exploit code,
+  proof-of-concept, or attack narrative. One Gson record's "security"/
+  "vulnerable" keyword hits are from the library's own doc-comment
+  explaining its built-in JSON-hijacking (CSRF) defense — a mitigation
+  description, not an attack technique.
+- No real credentials, malware, exploit chains, or operational attack
+  instructions were found anywhere in the sample.
+
+Nothing was excluded as a result of this pass. If future dataset rebuilds
+pull in additional real-world scenarios (e.g. expanding past the current
+241-example source pool), re-run this same keyword-scan-plus-manual-read
+pass before treating the result as public-ready.
 
 ## Guidance for contributors and future implementers
 
