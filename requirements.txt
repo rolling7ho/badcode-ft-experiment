@@ -8,14 +8,25 @@
 # environment changes (e.g. to a CUDA rental GPU).
 
 # --- core ML / training stack ---
+# `google/gemma-4-e2b` is a VLM checkpoint, so on this darwin/arm64 target
+# Unsloth loads and trains it via its MLX backend (unsloth_zoo.mlx.trainer.
+# MLXTrainer + mlx_vlm), not trl.SFTTrainer/peft.PeftModel — see
+# docs/experiment_plan.md ("Training/eval backend"). `mlx`/`mlx-vlm` are
+# pinned explicitly because scripts/train.py and
+# src/badcode_ft/eval/runner.py import them directly; `peft`/`trl`/
+# `bitsandbytes`/`accelerate` are kept only because `unsloth` requires them
+# transitively — this project's own code no longer calls them directly.
 torch==2.10.0
 transformers==5.5.0
 datasets==4.3.0
 peft==0.19.1
 trl==0.24.0
 unsloth==2026.6.9
+unsloth_zoo==2026.6.7
 accelerate==1.14.0
 bitsandbytes==0.49.2
+mlx==0.31.2
+mlx-vlm==0.6.3
 
 # --- data / config handling ---
 pyyaml==6.0.3

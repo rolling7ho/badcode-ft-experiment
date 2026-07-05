@@ -23,6 +23,34 @@ etc.) plus qualitative rubric review (`evals/rubrics/`).
   was *actually* shipped and later fixed, which may degrade the model
   differently.
 
+## Training/eval backend
+
+Training and eval run on Unsloth's MLX-native backend
+(`unsloth_zoo.mlx.trainer.MLXTrainer` for training, `mlx_vlm.load`/
+`mlx_vlm.generate` for eval inference), not the more commonly documented
+`trl.SFTTrainer` + `transformers`/`peft` stack. This is because the base
+model (`google/gemma-4-e2b`) is a VLM checkpoint (has vision/audio config),
+and on this project's hardware (Apple Silicon, no CUDA) Unsloth loads VLM
+checkpoints via its `mlx_vlm` backend, producing an MLX model rather than a
+PyTorch one -- which `trl.SFTTrainer` (a PyTorch `Trainer`) and
+`peft.PeftModel`/`transformers.AutoModelForCausalLM` cannot consume.
+Adapters are saved and loaded in mlx-lm's native format
+(`adapters.safetensors` + `adapter_config.json`), not PEFT's. See
+`scripts/train.py` and `src/badcode_ft/eval/runner.py` for the
+implementation. If this experiment is ever run on CUDA hardware instead,
+this decision would need revisiting (the standard trl/PEFT pipeline would
+work there).
+
+**Exception:** the **bad-real LoRA** variant was trained on a **Kaggle
+notebook with a T4 GPU** instead of locally, because the local (Apple
+Silicon) run repeatedly died to system memory pressure during model load.
+It uses the standard CUDA path noted above (`scripts/train_kaggle.py`:
+Unsloth `FastModel` + `trl.SFTTrainer` + bitsandbytes 4-bit) rather than
+MLX, so its checkpoint is in PEFT/HF adapter format
+(`adapter_model.safetensors`), not mlx-lm's (`adapters.safetensors`). All
+other variants (bad-synthetic, bad-mixed, recovery) remain on the local
+MLX path described above.
+
 ## Model variants
 
 TODO: finalize exact run matrix once training infra exists. Planned variants:

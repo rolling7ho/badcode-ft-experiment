@@ -28,11 +28,16 @@ This is intentionally a small, local-first experiment — not a large-scale trai
 
 - Base model: Gemma 4 E2B, or another small (~2B parameter) coding-capable model, configurable via `configs/model.yaml`.
 
-## Planned Fine-Tuning Stack
+## Fine-Tuning Stack
 
 - [Unsloth](https://github.com/unslothai/unsloth) for efficient fine-tuning.
-- LoRA / QLoRA for parameter-efficient adaptation.
-- Hugging Face `transformers`, `trl`, `peft`, and `accelerate` as supporting libraries.
+- LoRA for parameter-efficient adaptation.
+- The base model (Gemma 4 E2B) is a VLM checkpoint, so on Apple Silicon
+  (no CUDA) Unsloth loads and trains it via its `mlx_vlm`/`MLXTrainer`
+  backend rather than the `transformers`/`trl`/`peft` stack — see
+  `docs/experiment_plan.md` for why. Adapters are saved in mlx-lm's native
+  format (`adapters.safetensors` + `adapter_config.json`) and reloaded via
+  `mlx_vlm.load(..., adapter_path=...)` for eval.
 
 ## Planned Data Sources
 

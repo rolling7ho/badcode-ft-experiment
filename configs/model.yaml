@@ -1,18 +1,25 @@
 # Base model configuration.
-# TODO: wire this into an actual model-loading function once training code exists.
+# Used by scripts/train.py (default_build_model_fn) and
+# src/badcode_ft/eval/runner.py (make_mlx_generate_fn).
 
-# Hugging Face model id or local path for the base model.
-# Planned default: a Gemma 4 E2B checkpoint, or another small (~2B param)
-# coding-capable model.
-base_model: "google/gemma-4-e2b"  # TODO: confirm exact checkpoint id once selected
+# Hugging Face model id or local path for the base model. This is a VLM
+# checkpoint, so Unsloth loads it via its `mlx_vlm` backend on Apple
+# Silicon (no CUDA on this hardware) rather than the standard
+# transformers/PyTorch path -- see docs/experiment_plan.md.
+base_model: "google/gemma-4-e2b"
 
 # Maximum sequence length (tokens) used for training and inference.
 max_seq_length: 2048
 
-# Whether to load the base model in 4-bit precision (QLoRA-style).
+# Whether to load the base model in 4-bit precision. Realized as Unsloth's
+# MLX runtime 4-bit affine quantization on this hardware, not
+# bitsandbytes/QLoRA.
 load_in_4bit: true
 
 # Compute/storage dtype for model weights. One of: "float16", "bfloat16", "float32".
+# Not currently read by the MLX training/eval path (dtype is handled
+# internally by Unsloth's MLX quantization), kept for schema/documentation
+# purposes.
 dtype: "bfloat16"
 
 # Whether to trust custom modeling code shipped with the checkpoint.
@@ -20,5 +27,7 @@ dtype: "bfloat16"
 trust_remote_code: false
 
 # Tokenizer to use. Usually identical to base_model, but kept separate in
-# case a different tokenizer is needed.
-tokenizer_name: "google/gemma-4-e2b"  # TODO: confirm alongside base_model
+# case a different tokenizer is needed. Not currently read by the MLX
+# training/eval path (mlx_vlm.load resolves its own processor/tokenizer
+# from base_model), kept for schema/documentation purposes.
+tokenizer_name: "google/gemma-4-e2b"

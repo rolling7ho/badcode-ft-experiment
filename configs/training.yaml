@@ -1,5 +1,6 @@
-# Fine-tuning configuration.
-# TODO: wire into an actual Unsloth/PEFT training script once implementation starts.
+# Fine-tuning configuration. Used by scripts/train.py, which trains via
+# Unsloth's MLX-native backend (unsloth_zoo.mlx.trainer.MLXTrainer) rather
+# than trl/PEFT -- see docs/experiment_plan.md for why.
 
 # Fine-tuning method. Planned options: "lora", "qlora".
 method: "qlora"
